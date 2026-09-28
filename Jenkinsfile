@@ -38,7 +38,7 @@ pipeline {
             emailext(
                 subject: "✅ Deployment SUCCESS - Car24",
                 body: "Your latest deployment was successful 🚀",
-                to: "team_r.d@stackenzo.com"
+                to: "itservices@stackenzo.com"
             )
         }
 
@@ -61,7 +61,7 @@ pipeline {
             emailext(
                 subject: "❌ Deployment FAILED - Car24 (Rollback Done)",
                 body: "Deployment failed. System rolled back to previous stable version.",
-                to: "team_r.d@stackenzo.com"
+                to: "itservices@stackenzo.com"
             )
         }
     }
