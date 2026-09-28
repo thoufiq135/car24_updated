@@ -1,0 +1,46 @@
+
+
+services:
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+  worker:
+   build: .
+   command: node workers/bookingWorker.js
+   depends_on:
+    - redis
+  backend:
+    build: .
+    container_name: car24-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+
+  
+      TABLE: users
+      BRANCH_TABLE: branches
+      CARS_TABLE: cars
+      BOOKING_TABLE: bookings
+      MANAGEMENT: management
+
+    
+      JWT_KEY: 9392983478
+
+     
+      NODEMAILER_PASS: "njry tlkh carc dpbw"
+
+  
+      RAZORPAY_API_KEY: "rzp_test_STuA5rLGbi8xST"
+      RAZORPAY_KEY_SECRET: "8F1lSZLsERQeFtpTW47Ev4an"
+
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
