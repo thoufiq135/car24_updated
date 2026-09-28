@@ -11,7 +11,7 @@
 const minio = require("minio");
 
 const minioClient = new minio.Client({
-  endPoint: "car24img.car24travels.com", 
+  endPoint: "images.car24travels.com", 
   port: 443,                           
   useSSL: true,
   accessKey: "minioadmin",
