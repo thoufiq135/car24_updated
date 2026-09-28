@@ -17,5 +17,5 @@ const minioClient = new minio.Client({
   accessKey: "minioadmin",
   secretKey: "minioadmin123"
 });
-
+console.log("connected to minio")
 module.exports = minioClient; 
