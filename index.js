@@ -58,6 +58,7 @@ app.use("/testRoute",generateMoney_test)
 // app.use('/api/owners', require('./routes/owners'));
 // app.use('/api/car-pricing', require('./routes/carPricing'));
 // app.use('/api/refunds', require('./routes/refunds'));
+console.log("hi")
 app.get("/",(req,res)=>{
     res.send("<h1> hello from car24 server</h1>")
 })
