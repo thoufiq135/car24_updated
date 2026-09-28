@@ -11,11 +11,24 @@
 const minio = require("minio");
 
 const minioClient = new minio.Client({
-  endPoint: "images.car24travels.com", 
-  port: 443,                           
+  endPoint: "images.car24travels.com",
+  port: 443,
   useSSL: true,
   accessKey: "minioadmin",
   secretKey: "minioadmin123"
 });
-console.log("connected to minio")
-module.exports = minioClient; 
+
+console.log("MinIO client created");
+
+minioClient.listBuckets((err, buckets) => {
+  if (err) {
+    console.error("❌ MINIO CONNECTION FAILED");
+    console.error(err);
+    return;
+  }
+
+  console.log("✅ MINIO CONNECTION SUCCESS");
+  console.log("Buckets:", buckets);
+});
+
+module.exports = minioClient;
