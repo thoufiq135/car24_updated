@@ -603,11 +603,111 @@ const autoCancle = async ({ bookingId, expoToken }) => {
     client.release();
   }
 };
+const paymentAutoCancel = async ({ bookingId, expoToken }) => {
+  try {
+    console.log(`⏰ Payment timeout check for booking ${bookingId}`);
+
+    const result = await pool.query(
+      `SELECT
+        id,
+        status,
+        payment_status,
+        payment_completed
+       FROM bookings
+       WHERE id = $1`,
+      [bookingId]
+    );
+
+    if (result.rows.length === 0) {
+      console.log(`❌ Booking ${bookingId} not found`);
+      return;
+    }
+
+    const booking = result.rows[0];
+
+    console.log("Payment timeout booking:", booking);
+
+    // Payment already completed
+    if (booking.payment_completed === true) {
+      console.log(
+        `✅ Booking ${bookingId} already paid. Payment auto-cancel skipped.`
+      );
+      return;
+    }
+
+    // Booking is no longer pending
+    if (booking.status !== "pending") {
+      console.log(
+        `ℹ️ Booking ${bookingId} is ${booking.status}. Payment auto-cancel skipped.`
+      );
+      return;
+    }
+
+    // Cancel pending booking
+    await pool.query(
+      `UPDATE bookings
+       SET
+         status = 'cancelled',
+         payment_status = 'cancelled',
+         cancellation_status = 'auto_cancelled',
+         "updatedAt" = NOW()
+       WHERE id = $1
+         AND status = 'pending'
+         AND payment_completed = false`,
+      [bookingId]
+    );
+
+    console.log(
+      `🚫 Booking ${bookingId} automatically cancelled because payment was not completed within 10 minutes`
+    );
+
+    // Notify customer
+    if (expoToken) {
+      try {
+        const data = {
+          url: `/(customer)/booking/${bookingId}`,
+          bookingId
+        };
+
+        const notificationSent = await sendNotification(
+          expoToken,
+          "Booking Cancelled ⏰",
+          "Your payment was not completed within 10 minutes. The booking has been cancelled.",
+          data
+        );
+
+        if (notificationSent) {
+          console.log(
+            `✅ Payment timeout notification sent for booking ${bookingId}`
+          );
+        } else {
+          console.log(
+            `❌ Payment timeout notification failed for booking ${bookingId}`
+          );
+        }
+      } catch (notificationError) {
+        console.error(
+          "🚨 Payment cancellation notification error:",
+          notificationError
+        );
+      }
+    }
+
+  } catch (error) {
+    console.error(
+      `❌ Payment auto-cancel failed for booking ${bookingId}:`,
+      error
+    );
+
+    throw error;
+  }
+};
 
 module.exports = {
   rideReminderJob,
   ridePenaltyJob,
   rideAutoExtendJob,
     rideStartReminderJob,
-    autoCancle
+    autoCancle,
+    paymentAutoCancel
 };

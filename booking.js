@@ -430,6 +430,30 @@ if (expoToken) {
       `UPDATE bookings SET "paymentId" = $1 WHERE id = $2`,
       [order.id, bookingId]
     );
+console.log(`💳 Razorpay order saved for booking ${bookingId}`);
+const userRes = await client.query(
+  `SELECT expo_token
+   FROM users
+   WHERE id = $1`,
+  [userId]
+);
+const expoToken = userRes.rows[0]?.expo_token || null;
+await bookingQueue.add(
+  "payment-auto-cancel",
+  {
+    bookingId,
+    expoToken
+  },
+  {
+    jobId: `payment-auto-cancel-${bookingId}`,
+    delay: 10 * 60 * 1000,
+    removeOnComplete: true,
+    removeOnFail: false
+  }
+);
+console.log(
+  `⏰ Payment auto-cancel job scheduled for booking ${bookingId} — 10 minutes`
+);
 
     await client.query("COMMIT");
     console.log('=== BookCar Success ===');

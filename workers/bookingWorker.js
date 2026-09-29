@@ -1,5 +1,5 @@
 const { Worker } = require("bullmq");
-const { rideReminderJob, ridePenaltyJob, rideAutoExtendJob, rideStartReminderJob,autoCancle } = require("../jobs/rideJobs");
+const { rideReminderJob, ridePenaltyJob, rideAutoExtendJob, rideStartReminderJob,autoCancle ,paymentAutoCancel} = require("../jobs/rideJobs");
 const { dailySettlementJob,firebaseSettlementJob } = require("../jobs/finacial");
 
 console.log("🚀 Worker started...");
@@ -38,6 +38,10 @@ case "firebase-settlement":
         const {bookingId,expoToken}=job.data;
         return autoCancle({bookingId,expoToken})
       }
+      case "payment-auto-cancel": {
+  const { bookingId,expoToken } = job.data;
+  return paymentAutoCancel({ bookingId,expoToken });
+}
 
       default:
         console.log("Unknown job");
