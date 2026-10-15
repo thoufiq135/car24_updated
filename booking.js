@@ -104,6 +104,7 @@ const parseISTToUTC = (dateValue) => {
   );
 };
 async function paymentfunction(amount, bookingId, branch) {
+  console.log("recived branch values in payment function",branch)
   const razorpay = getRazorpay(branch);
 
   const order = await razorpay.orders.create({
@@ -426,7 +427,7 @@ if (expoToken) {
 
     // ── 10. Create Razorpay order for remaining advance ──
     console.log('Creating Razorpay order for amount:', advancePayable);
-    
+    console.log("recived branch values in booking function",pricing.branchId)
     const order = await paymentfunction(advancePayable, bookingId,pricing.branchId);
     console.log('Razorpay order:', order?.id);
 
