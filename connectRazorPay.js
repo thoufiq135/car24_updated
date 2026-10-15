@@ -13,12 +13,15 @@ const razorpayDefault = new Razorpay({
 });
 
 function getRazorpay(branch) {
-  if (Number(branch)===5) {
-    console.log("calling nellore")
+  console.log("Received branch value:", branch);
+  console.log("Received branch type:", typeof branch);
+
+  if (Number(branch) === 5) {
+    console.log("calling nellore");
     return razorpayNellore;
   }
-console.log("calling others")
+
+  console.log("calling others");
   return razorpayDefault;
 }
-
 module.exports = { getRazorpay };
