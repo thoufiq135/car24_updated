@@ -232,7 +232,7 @@ router.post("/bookCar", rateLimiter, async (req, res) => {
 
     // ── 5. Get car pricing ──
     const carPrice = await pool.query(
-      `SELECT "branchId" six_hr_price, twelve_hr_price, twentyfour_hr_price 
+      `SELECT "branchId" ,six_hr_price, twelve_hr_price, twentyfour_hr_price 
        FROM ${process.env.cars_table} WHERE id=$1`,
       [carId]
     ); 
