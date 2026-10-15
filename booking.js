@@ -4,7 +4,7 @@ const {pool,redis,fire_db}=require("./connectdb")
 const {veriftJWT,createJwt}=require("./jwt")
 const minioClient = require("./minioConnect")
 const rateLimiter = require("./rateLimiter")
-const razorpay = require("./connectRazorPay") 
+const { getRazorpay } = require("./razorpay");
 const sendNotification = require("./expoNotification")
 const crypto = require("crypto");
 const sendfireNotification=require("./testFirebase")
@@ -422,7 +422,8 @@ if (expoToken) {
 
     // ── 10. Create Razorpay order for remaining advance ──
     console.log('Creating Razorpay order for amount:', advancePayable);
-    const order = await paymentfunction(advancePayable, bookingId);
+    
+    const order = await paymentfunction(advancePayable, bookingId,pricing.branchId);
     console.log('Razorpay order:', order?.id);
 
     // Save order id
