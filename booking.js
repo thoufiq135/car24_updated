@@ -463,7 +463,7 @@ console.log(
 
     await client.query("COMMIT");
     console.log('=== BookCar Success ===');
-
+console.log("order",order)
     return res.status(200).json({
       message:       "Booking created",
       bookingId,
