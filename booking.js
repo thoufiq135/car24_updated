@@ -103,14 +103,18 @@ const parseISTToUTC = (dateValue) => {
     )
   );
 };
-async function paymentfunction(amount, bookingId) {
-  const order=await razorpay.orders.create({
-    amount: amount * 100,
+async function paymentfunction(amount, bookingId, branch) {
+  const razorpay = getRazorpay(branch);
+
+  const order = await razorpay.orders.create({
+    amount: Math.round(Number(amount) * 100),
     currency: "INR",
-    receipt: `booking_${bookingId}`
-  })  
-  return order
+    receipt: `booking_${bookingId}`,
+  });
+
+  return order;
 }
+
 function calculateAdvanceAmount(totalHours) {
   let remaining = totalHours;
   let advance = 0;
