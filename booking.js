@@ -4,7 +4,8 @@ const {pool,redis,fire_db}=require("./connectdb")
 const {veriftJWT,createJwt}=require("./jwt")
 const minioClient = require("./minioConnect")
 const rateLimiter = require("./rateLimiter")
-const { getRazorpay } = require("./connectRazorPay");
+const { getRazorpay,
+  getRazorpayKeyId, } = require("./connectRazorPay");
 const sendNotification = require("./expoNotification")
 const crypto = require("crypto");
 const sendfireNotification=require("./testFirebase")
@@ -106,14 +107,17 @@ const parseISTToUTC = (dateValue) => {
 async function paymentfunction(amount, bookingId, branch) {
   console.log("recived branch values in payment function",branch)
   const razorpay = getRazorpay(branch);
-
+ const razorpayKeyId = getRazorpayKeyId(branch);
   const order = await razorpay.orders.create({
     amount: Math.round(Number(amount) * 100),
     currency: "INR",
     receipt: `booking_${bookingId}`,
   });
 
-  return order;
+  return {
+    ...order,
+    razorpayKeyId,
+  };
 }
 
 function calculateAdvanceAmount(totalHours) {

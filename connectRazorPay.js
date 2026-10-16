@@ -24,4 +24,11 @@ function getRazorpay(branch) {
   console.log("calling others");
   return razorpayDefault;
 }
-module.exports = { getRazorpay };
+function getRazorpayKeyId(branch) {
+  if (Number(branch) === 5) {
+    return process.env.RAZORPAY_NELLORE_KEY_ID;
+  }
+
+  return process.env.RAZORPAY_DEFAULT_KEY_ID;
+}
+module.exports = { getRazorpay, getRazorpayKeyId };
